@@ -26,10 +26,8 @@ class _LoginPageState extends State<LoginPage> {
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
-        // Đăng nhập thành công, điều hướng đến trang chính
         Navigator.pushReplacementNamed(context, '/home');
       } catch (e) {
-        // Xử lý lỗi đăng nhập
         print('Đăng nhập thất bại: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -50,6 +48,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Đăng nhập'),
+        automaticallyImplyLeading: false,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
