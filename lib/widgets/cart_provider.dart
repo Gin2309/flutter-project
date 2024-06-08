@@ -1,38 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CartProvider with ChangeNotifier {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final String _userId = '9cCUEvHyVfhFxAz5ianLFjFqr552';
   final List<Map<String, dynamic>> _items = [];
-  DatabaseReference _cartRef =
-      FirebaseDatabase.instance.reference().child('carts');
+
+  CartProvider() {
+    _fetchCartFromFirestore();
+  }
 
   List<Map<String, dynamic>> get items => _items;
 
-  CartProvider() {
-    _fetchCartFromFirebase();
-  }
+  Future<void> _fetchCartFromFirestore() async {
+    try {
+      DocumentSnapshot documentSnapshot =
+          await _firestore.collection('carts').doc(_userId).get();
 
-  void _fetchCartFromFirebase() {
-    _cartRef.onValue.listen((event) {
-      if (event.snapshot.value != null) {
-        final data = event.snapshot.value as Map<dynamic, dynamic>;
+      if (documentSnapshot.exists) {
+        final data = documentSnapshot.data() as Map<String, dynamic>;
+        final cartItems = data['items'] as List<dynamic>;
         _items.clear();
-        data.forEach((key, value) {
-          _items.add(value);
+        cartItems.forEach((item) {
+          _items.add(Map<String, dynamic>.from(item));
         });
         notifyListeners();
       }
-    }, onError: (error) {
-      print('Error fetching cart from Firebase: $error');
-    });
+    } catch (error) {
+      print('Error fetching cart from Firestore: $error');
+    }
   }
 
-  void _saveCartToFirebase() {
-    _cartRef.set(_items).then((_) {
-      print('Cart successfully saved to Firebase');
-    }).catchError((error) {
-      print('Error saving cart to Firebase: $error');
-    });
+  Future<void> _saveCartToFirestore() async {
+    try {
+      await _firestore.collection('carts').doc(_userId).set({
+        'items': _items,
+      });
+    } catch (error) {
+      print('Error saving cart to Firestore: $error');
+    }
   }
 
   void addItem(Map<String, dynamic> product) {
@@ -42,13 +48,13 @@ class CartProvider with ChangeNotifier {
     } else {
       _items.add({...product, 'quantity': 1});
     }
-    _saveCartToFirebase();
+    _saveCartToFirestore();
     notifyListeners();
   }
 
   void removeItem(int id) {
     _items.removeWhere((item) => item['id'] == id);
-    _saveCartToFirebase();
+    _saveCartToFirestore();
     notifyListeners();
   }
 
@@ -56,7 +62,7 @@ class CartProvider with ChangeNotifier {
     final index = _items.indexWhere((item) => item['id'] == id);
     if (index >= 0) {
       _items[index]['quantity'] += 1;
-      _saveCartToFirebase();
+      _saveCartToFirestore();
       notifyListeners();
     }
   }
@@ -65,7 +71,7 @@ class CartProvider with ChangeNotifier {
     final index = _items.indexWhere((item) => item['id'] == id);
     if (index >= 0 && _items[index]['quantity'] > 1) {
       _items[index]['quantity'] -= 1;
-      _saveCartToFirebase();
+      _saveCartToFirestore();
       notifyListeners();
     }
   }

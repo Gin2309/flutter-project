@@ -1,13 +1,15 @@
-import 'package:application/pages/login.dart';
-import 'package:application/pages/register.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:application/pages/new_product.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:application/pages/home_page.dart';
 import 'package:application/pages/product_detail.dart';
 import 'package:application/pages/add_product_page.dart';
 import 'package:application/widgets/cart_provider.dart';
+import 'package:application/pages/login.dart';
+import 'package:application/pages/register.dart';
+import 'package:application/pages/categories.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -46,7 +48,15 @@ class MyApp extends StatelessWidget {
                       product:
                           ModalRoute.of(context)!.settings.arguments as dynamic,
                     ),
-                '/add_product': (context) => AddProductPage(),
+                '/new_product': (context) => ProductDetailPage(
+                      productId:
+                          ModalRoute.of(context)!.settings.arguments as String,
+                    ),
+                '/add_product': (context) => const AddProductPage(),
+                '/categories': (context) => CategoryProductsPage(
+                      category:
+                          ModalRoute.of(context)!.settings.arguments as String,
+                    ),
               },
             );
           } else {
@@ -55,12 +65,21 @@ class MyApp extends StatelessWidget {
               initialRoute: '/login',
               routes: {
                 '/login': (context) => const LoginPage(),
+                '/register': (context) => const RegisterPage(),
                 '/home': (context) => const HomePage(),
                 '/detail': (context) => ProductDetail(
                       product:
                           ModalRoute.of(context)!.settings.arguments as dynamic,
                     ),
-                '/add_product': (context) => AddProductPage(),
+                '/new_product': (context) => ProductDetailPage(
+                      productId:
+                          ModalRoute.of(context)!.settings.arguments as String,
+                    ),
+                '/add_product': (context) => const AddProductPage(),
+                '/categories': (context) => CategoryProductsPage(
+                      category:
+                          ModalRoute.of(context)!.settings.arguments as String,
+                    ),
               },
             );
           }

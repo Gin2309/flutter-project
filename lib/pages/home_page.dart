@@ -6,6 +6,7 @@ import 'package:application/widgets/categories_widget.dart';
 import 'package:application/widgets/product_list.dart';
 import 'package:application/widgets/cart_bottom_sheet.dart';
 import 'package:application/pages/add_product_page.dart';
+import 'package:application/widgets/new.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class HomePage extends StatelessWidget {
@@ -14,6 +15,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<CartProvider>(context);
+    FirebaseAuth auth = FirebaseAuth.instance;
+    String? email = auth.currentUser?.email;
     return Scaffold(
       backgroundColor: Colors.blueAccent,
       body: SafeArea(
@@ -25,10 +28,10 @@ class HomePage extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Column(
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "Xin chào",
                           style: TextStyle(
                             fontSize: 35,
@@ -37,7 +40,7 @@ class HomePage extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          "Bạn muốn mua gì?",
+                          email ?? "User",
                           style: TextStyle(color: Colors.white, fontSize: 20),
                         ),
                       ],
@@ -53,8 +56,8 @@ class HomePage extends StatelessWidget {
                         onPressed: () {
                           showModalBottomSheet(
                             context: context,
-                            builder: (context) => CartBottomSheet(),
                             isScrollControlled: true,
+                            builder: (context) => CartBottomSheet(),
                           );
                         },
                       ),
@@ -62,68 +65,26 @@ class HomePage extends StatelessWidget {
                   ],
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                margin: const EdgeInsets.all(15),
-                height: 50,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.search),
-                    Container(
-                      margin: const EdgeInsets.only(left: 10),
-                      width: 250,
-                      child: TextFormField(
-                        decoration: const InputDecoration(
-                          hintText: "Tìm kiếm",
-                          border: InputBorder.none,
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-                    const Icon(Icons.filter_list),
-                  ],
-                ),
-              ),
+              const CategoriesWidget(),
+              const LatestProductsWidget(),
               Container(
                 padding: const EdgeInsets.only(top: 20),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(30),
-                    topRight: Radius.circular(30),
-                  ),
-                ),
-                child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CategoriesWidget(),
-                    ProductList(),
-                  ],
-                ),
+                child: const ProductList(),
               ),
             ],
           ),
         ),
       ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 16.0, right: 10.0),
-        child: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AddProductPage(),
-              ),
-            );
-          },
-          child: const Icon(Icons.add),
-        ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddProductPage()),
+          );
+        },
+        child: const Icon(Icons.add),
+        backgroundColor: Colors.white,
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
   }
 }

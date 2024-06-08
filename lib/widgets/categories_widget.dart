@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:application/pages/categories.dart';
 
 class CategoriesWidget extends StatelessWidget {
   const CategoriesWidget({super.key});
 
   Future<List<dynamic>> fetchCategories() async {
-    final response = await http
-        .get(Uri.parse('https://fakestoreapi.com/products/categories'));
+    final response = await http.get(
+      Uri.parse('https://fakestoreapi.com/products/categories'),
+    );
     if (response.statusCode == 200) {
       return json.decode(response.body);
     } else {
@@ -29,7 +31,7 @@ class CategoriesWidget extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue,
+                  color: Colors.white,
                 ),
               ),
               Text(
@@ -58,27 +60,41 @@ class CategoriesWidget extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: categories.map((category) {
-                    return Container(
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade100,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 1,
-                            blurRadius: 6,
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CategoryProductsPage(
+                              category: category,
+                            ),
                           ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Text(
-                          category.toString(),
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                        );
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 1,
+                              blurRadius: 6,
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Text(
+                            category.toString(),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
