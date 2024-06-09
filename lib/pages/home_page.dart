@@ -83,7 +83,7 @@ class HomePage extends StatelessWidget {
           );
         },
         child: const Icon(Icons.add),
-        backgroundColor: Colors.white,
+        // backgroundColor: Colors.white,
       ),
     );
   }
